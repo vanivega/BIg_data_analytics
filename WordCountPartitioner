@@ -1,0 +1,101 @@
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Partitioner;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
+import WordCount.Map;
+import WordCount.Reduce;
+public class WordCountPartitioner extends Partitioner<Text,IntWritable>{
+	//getPartition() method receives a key and a value and the number of partitions to split the data
+	//in the range [0, numPartitions) must be returned by this method
+	//indicating which partition to send the key and value to
+public int getPartition(Text key, IntWritable value, int numPartitions){
+String word = key.toString();
+char alphabet = word.toUpperCase().charAt(0);
+int partitionNumber = 0;
+switch(alphabet){
+case 'A': partitionNumber = 1;break;
+case 'B': partitionNumber = 1;break;
+case 'C': partitionNumber = 1;break;
+case 'D': partitionNumber = 1;break;
+case 'E': partitionNumber = 1;break;
+case 'F': partitionNumber = 1;break;
+case 'G': partitionNumber = 1;break;
+case 'H': partitionNumber = 1;break;
+case 'I': partitionNumber = 1;break;
+case 'J': partitionNumber = 1;break;
+case 'K': partitionNumber = 1;break;
+case 'L': partitionNumber = 1;break;
+case 'M': partitionNumber = 1;break;
+case 'N': partitionNumber = 1;break;
+case 'O': partitionNumber = 1;break;
+case 'P': partitionNumber = 1;break;
+case 'Q': partitionNumber = 1;break;
+case 'R': partitionNumber = 1;break;
+case 'S': partitionNumber = 1;break;
+case 'T': partitionNumber = 1;break;
+case 'U': partitionNumber = 1;break;
+case 'V': partitionNumber = 1;break;
+case 'W': partitionNumber = 1;break;
+case 'X': partitionNumber = 1;break;
+case 'Y': partitionNumber = 1;break;
+case 'Z': partitionNumber = 1;break;
+default: partitionNumber = 0;break;
+}
+return partitionNumber;
+}
+}
+//In the drive program set the partioner class as shown below:
+
+public static void main(String[] args) throws Exception {
+	   //create object of class Configuration
+   Configuration conf = new Configuration();
+//define job that needs to get executed on Hadoop cluster with name of Mapreduce program
+   Job job = new Job(conf, "wordcount");
+
+   //set jar by class i.e main class
+   job.setJarByClass(WordCount.class);
+   //set output key class i.e Text because output was of type Text in reduce class(see arguments)
+   job.setOutputKeyClass(Text.class);
+   //set output value class which is Intwritable
+   job.setOutputValueClass(IntWritable.class);
+//set mapper class
+   job.setMapperClass(Map.class);
+   //set reducer class
+   job.setReducerClass(Reduce.class);
+
+   //set inputformat class is 
+   job.setInputFormatClass(TextInputFormat.class);
+   //set output format class
+   job.setOutputFormatClass(TextOutputFormat.class);
+
+   //set input path of input file to be used by mapreduce program
+   //args[0] means very first argument passed from command line is the input path
+   FileInputFormat.addInputPath(job, new Path(args[0]));
+   //similarly output path is argument [1]
+   FileOutputFormat.setOutputPath(job, new Path(args[1]));
+   //while executing word count program I give
+   //hadoop jar wordcount.jar /input /output 
+   //args[0] is /input and args[1] is /output
+
+   
+   
+   //****************set the partitioner class*************
+   //setNumReduceTasks()) method decides number of  partitions 
+   job.setNumReduceTasks(27);
+   job.setPartitionerClass(WordCountPartitioner.class);
+   
+   //input and output path
+   FileInputFormat.addInputPath(job,new Path("/mapreducedemos/lines.txt"));
+   FileOutputFormat.setOutputPath(job,new Path("/mapreducedemos/output/wordcountpartitioner/"));
+   job.waitForCompletion(true);
+}
+
+
+
